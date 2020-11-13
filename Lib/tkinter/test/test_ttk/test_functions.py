@@ -199,17 +199,27 @@ class InternalFunctionsTest(unittest.TestCase):
         # don't format returned values as a tcl script
         # minimum acceptable for vsapi
         self.assertEqual(ttk._format_elemcreate('vsapi', False, 'a', 'b'),
-            ("a b ", ()))
+            ("a b {}", ()))
         # now with a state spec with multiple states
         self.assertEqual(ttk._format_elemcreate('vsapi', False, 'a', 'b',
-            ('a', 'b', 'c')), ("a b {a b} c", ()))
+            ('a', 'b', 'c')), ("a b {{a b} c}", ()))
+        # now with multiple state specs with multiple states
+        self.assertEqual(ttk._format_elemcreate('vsapi', False, 'a', 'b',
+            ('a', 'b', 'c'), ('d','e')), ('a b {{a b} c d e}', ()))
+        # now with multiple state specs with multiple states and default state
+        self.assertEqual(ttk._format_elemcreate('vsapi', False, 'a', 'b',
+            ('a', 'b', 'c'), ('','e')), ('a b {{a b} c {} e}', ()))
         # state spec and option
         self.assertEqual(ttk._format_elemcreate('vsapi', False, 'a', 'b',
-            ('a', 'b'), opt='x'), ("a b a b", ("-opt", "x")))
+            ('a', 'b'), opt='x'), ("a b {a b}", ("-opt", "x")))
+        # state spec and multiple options
+        self.assertEqual(ttk._format_elemcreate('vsapi', False, 'a', 'b',
+            ('a', 'b'), opt='x', op2=(0,1)),
+            ("a b {a b}", ("-opt", "x", "-op2", "{0 1}")))
         # format returned values as a tcl script
-        # state spec with a multivalue and an option
+        # state spec with multiple states and an option
         self.assertEqual(ttk._format_elemcreate('vsapi', True, 'a', 'b',
-            ('a', 'b', [1, 2]), opt='x'), ("{a b {a b} {1 2}}", "-opt x"))
+            ('a', 'b', 'c'), opt='x'), ("{a b {{a b} c}}", "-opt x"))
 
         # Testing type = from
         # from type expects at least a type name

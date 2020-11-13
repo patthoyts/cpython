@@ -132,9 +132,9 @@ def _format_elemcreate(etype, script=False, *args, **kw):
             # Availability: Tk 8.6, Windows XP and Vista.
             class_name, part_id = args[:2]
             statemap = _join(_mapdict_values(args[2:]))
-            spec = "%s %s %s" % (class_name, part_id, statemap)
+            spec = "%s %s {%s}" % (class_name, part_id, statemap)
 
-        opts = _format_optdict(kw, script)
+        opts = _format_optdict(kw, True)
 
     elif etype == "from": # clone an element
         # it expects a themename and optionally an element to clone from,
